@@ -513,7 +513,6 @@ async function sendMessage() {
     chatContainer.classList.add('has-messages');
     mainContent.classList.add('has-messages');
   }
-  // Remove the else block that was clearing messages - keep chat persistent during session
   
   // Add user message and store its ID
   lastUserMessageId = addMessage(message, 'user');
@@ -525,35 +524,10 @@ async function sendMessage() {
   try {
     const advice = await getGeminiAdvice(message);
     
-    // Remove loading message and replace with user query
+    // Remove loading message completely
     const loadingElement = document.getElementById(loadingId);
     if (loadingElement) {
-      const textElement = loadingElement.querySelector('.loading span');
-      if (textElement) {
-        textElement.textContent = message;
-      }
-      loadingElement.classList.remove('ai');
-      loadingElement.classList.add('user');
-      loadingElement.querySelector('.loading')?.remove();
-      
-      // Update message content structure
-      const messageContent = loadingElement.querySelector('.message-content');
-      if (messageContent) {
-        messageContent.innerHTML = `
-          <div class="message-text">${formatMessage(message)}</div>
-          <div class="message-time">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
-        `;
-      }
-      
-      // Update avatar
-      const avatar = loadingElement.querySelector('.message-avatar');
-      if (avatar) {
-        avatar.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-          <circle cx="12" cy="7" r="4"/>
-        </svg>`;
-      }
-      loadingElement.removeAttribute('id');
+      loadingElement.remove();
     }
     
     if (advice) {
@@ -563,35 +537,10 @@ async function sendMessage() {
       throw new Error('No advice generated');
     }
   } catch (error) {
-    // Remove loading message and replace with user query
+    // Remove loading message completely
     const loadingElement = document.getElementById(loadingId);
     if (loadingElement) {
-      const textElement = loadingElement.querySelector('.loading span');
-      if (textElement) {
-        textElement.textContent = message;
-      }
-      loadingElement.classList.remove('ai');
-      loadingElement.classList.add('user');
-      loadingElement.querySelector('.loading')?.remove();
-      
-      // Update message content structure
-      const messageContent = loadingElement.querySelector('.message-content');
-      if (messageContent) {
-        messageContent.innerHTML = `
-          <div class="message-text">${formatMessage(message)}</div>
-          <div class="message-time">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
-        `;
-      }
-      
-      // Update avatar
-      const avatar = loadingElement.querySelector('.message-avatar');
-      if (avatar) {
-        avatar.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-          <circle cx="12" cy="7" r="4"/>
-        </svg>`;
-      }
-      loadingElement.removeAttribute('id');
+      loadingElement.remove();
     }
     const offlineAdvice = getOfflineHealthAdvice(message);
     addMessageWithTypewriter('🏥 **PreAid Offline Mode** - ' + offlineAdvice, 'ai');
@@ -1007,10 +956,10 @@ function addMessage(content, sender, isLoading = false) {
   
   messagesContainer.appendChild(messageDiv);
   
-  // No auto-scroll here - handled by typewriter or user message scroll
-  // setTimeout(() => {
-  //   messagesContainer.scrollTop = messagesContainer.scrollHeight;
-  // }, 100);
+  // Auto-scroll to new user messages
+  if (sender === 'user') {
+    smoothScrollToBottom(messagesContainer);
+  }
   
   // Add to chat history
   if (!isLoading) {
@@ -1056,8 +1005,8 @@ function addMessageWithTypewriter(content, sender) {
   tempDiv.innerHTML = formattedContent;
   const plainText = tempDiv.textContent || tempDiv.innerText || '';
   
-  // Scroll to bottom initially
-  messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  // Auto-scroll to new message initially
+  smoothScrollToBottom(messagesContainer);
   
   function typeWriter() {
     if (index < plainText.length) {
@@ -1065,19 +1014,35 @@ function addMessageWithTypewriter(content, sender) {
       textElement.innerHTML = formatMessage(currentText);
       index++;
       
-      // Smooth scroll to bottom while typing
-      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      // Only auto-scroll if user hasn't manually scrolled up
+      if (isNearBottom(messagesContainer)) {
+        smoothScrollToBottom(messagesContainer);
+      }
       
-      setTimeout(typeWriter, 15);
+      setTimeout(typeWriter, 5); // 3x faster (was 15ms, now 5ms)
     } else {
       textElement.innerHTML = formattedContent;
-      // Final scroll to bottom
-      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      // Final scroll if still near bottom
+      if (isNearBottom(messagesContainer)) {
+        smoothScrollToBottom(messagesContainer);
+      }
     }
   }
   
   typeWriter();
   return messageId;
+}
+
+// Smooth scrolling utility functions
+function smoothScrollToBottom(container) {
+  container.scrollTo({
+    top: container.scrollHeight,
+    behavior: 'smooth'
+  });
+}
+
+function isNearBottom(container, threshold = 100) {
+  return container.scrollTop + container.clientHeight >= container.scrollHeight - threshold;
 }
 
 function scrollToUserMessage() {
@@ -1086,8 +1051,7 @@ function scrollToUserMessage() {
     const messagesContainer = document.getElementById('chat-messages');
     
     if (userMessage && messagesContainer) {
-      const userMessageTop = userMessage.offsetTop;
-      messagesContainer.scrollTop = userMessageTop - 20; // Small offset for better visibility
+      userMessage.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }
 }

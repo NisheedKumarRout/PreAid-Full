@@ -999,6 +999,8 @@ body {
   padding: 2rem 2rem 0 2rem;
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+  scroll-behavior: smooth;
+  scroll-padding-top: 20px;
 }
 
 .chat-messages::-webkit-scrollbar {

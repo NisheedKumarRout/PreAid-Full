@@ -1,14 +1,14 @@
 // Environment Configuration - Generated during build
 // This file is auto-generated during deployment - do not edit manually
 window.ENV = {
-  SUPABASE_URL: 'your_supabase_url_here',
-  SUPABASE_ANON_KEY: 'your_supabase_anon_key_here',
-  GEMINI_API_KEY: 'your_gemini_api_key_here',
-  OPENAI_API_KEY: '',
-  COHERE_API_KEY: '',
-  HUGGINGFACE_API_KEY: '',
-  TOGETHER_API_KEY: '',
-  ANTHROPIC_API_KEY: ''  
+  SUPABASE_URL: process.env.SUPABASE_URL || '',
+  SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY || '',
+  GEMINI_API_KEY: process.env.GEMINI_API_KEY || '',
+  OPENAI_API_KEY: process.env.OPENAI_API_KEY || '',
+  COHERE_API_KEY: process.env.COHERE_API_KEY || '',
+  HUGGINGFACE_API_KEY: process.env.HUGGINGFACE_API_KEY || '',
+  TOGETHER_API_KEY: process.env.TOGETHER_API_KEY || '',
+  ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY || ''  
 };
 
 // Debug information (will be removed in production)
