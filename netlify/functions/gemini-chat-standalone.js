@@ -1,296 +1,119 @@
-// Standalone Netlify Function with embedded Multi-AI Service
-// This avoids module resolution issues in Netlify Functions environment
+// Standalone Netlify Function — PreAid AI Chat
+// Uses the official Google Generative AI SDK for Gemini (permanent, version-safe)
+// Falls back to OpenAI, Cohere, and Anthropic if Gemini is unavailable
 
-// Multi-AI Service implementation (embedded)
-class MultiAIService {
-  constructor() {
-    this.providers = [
-      {
-        name: 'gemini',
-        apiKey: process.env.GEMINI_API_KEY,
-        baseUrl: 'https://generativelanguage.googleapis.com/v1/models/gemini-2.5-pro:generateContent',
-        formatRequest: this.formatGeminiRequest.bind(this),
-        parseResponse: this.parseGeminiResponse.bind(this),
-        tier: 'free',
-        limit: '15 req/min'
-      },
-      {
-        name: 'openai',
-        apiKey: process.env.OPENAI_API_KEY,
-        baseUrl: 'https://api.openai.com/v1/chat/completions',
-        formatRequest: this.formatOpenAIRequest.bind(this),
-        parseResponse: this.parseOpenAIResponse.bind(this),
-        tier: 'freemium',
-        limit: '$5 credits'
-      },
-      {
-        name: 'cohere',
-        apiKey: process.env.COHERE_API_KEY,
-        baseUrl: 'https://api.cohere.ai/v1/generate',
-        formatRequest: this.formatCohereRequest.bind(this),
-        parseResponse: this.parseCohereResponse.bind(this),
-        tier: 'free',
-        limit: '5000 calls/month'
-      },
-      {
-        name: 'anthropic',
-        apiKey: process.env.ANTHROPIC_API_KEY,
-        baseUrl: 'https://api.anthropic.com/v1/messages',
-        formatRequest: this.formatAnthropicRequest.bind(this),
-        parseResponse: this.parseAnthropicResponse.bind(this),
-        tier: 'paid',
-        limit: 'pay-per-use'
-      }
-    ];
+// ─── GEMINI via official SDK ──────────────────────────────────────────────────
+async function callGemini(prompt) {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) throw new Error('GEMINI_API_KEY not set');
 
-    // Filter out providers without API keys
-    this.availableProviders = this.providers.filter(provider => 
-      provider.apiKey && provider.apiKey !== 'your_api_key_here' && provider.apiKey.length > 10
-    );
+  // Model name is read from env var — change it in Netlify dashboard without touching code
+  const model = process.env.GEMINI_MODEL || 'gemini-2.0-flash';
 
-    if (this.availableProviders.length === 0) {
-      console.warn('⚠️ No AI providers configured! Please add at least one API key to your environment variables.');
-    } else {
-      console.log(`✅ Configured AI providers: ${this.availableProviders.map(p => p.name).join(', ')}`);
-    }
-  }
+  const { GoogleGenerativeAI } = require('@google/generative-ai');
+  const genAI = new GoogleGenerativeAI(apiKey);
+  const genModel = genAI.getGenerativeModel({ model });
 
-  // Gemini API formatting
-  formatGeminiRequest(prompt, config = {}) {
-    const provider = this.providers.find(p => p.name === 'gemini');
-    const url = `${provider.baseUrl}?key=${provider.apiKey}`;
-    const body = {
-      contents: [{ role: 'user', parts: [{ text: prompt }] }],
-      generationConfig: {
-        temperature: config.temperature || 0.7,
-        maxOutputTokens: config.maxTokens || 2048,
-        topP: config.topP || 0.8,
-        topK: config.topK || 40
-      }
-    };
-    
-    return {
-      url,
-      options: {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      }
-    };
-  }
-
-  parseGeminiResponse(data) {
-    if (data?.promptFeedback?.blockReason) {
-      throw new Error(`Request blocked by safety filters: ${data.promptFeedback.blockReason}`);
-    }
-    
-    const parts = data?.candidates?.[0]?.content?.parts || [];
-    const text = parts.map(p => (typeof p.text === 'string' ? p.text : '')).filter(Boolean).join('\n\n');
-    
-    if (!text) {
-      throw new Error('No content generated');
-    }
-    
-    return text;
-  }
-
-  // OpenAI API formatting
-  formatOpenAIRequest(prompt, config = {}) {
-    const provider = this.providers.find(p => p.name === 'openai');
-    const url = provider.baseUrl;
-    const body = {
-      model: 'gpt-4o-mini',
-      messages: [
-        { role: 'user', content: prompt }
-      ],
-      temperature: config.temperature || 0.7,
-      max_tokens: config.maxTokens || 2048,
-      top_p: config.topP || 0.8
-    };
-    
-    return {
-      url,
-      options: {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${provider.apiKey}`
-        },
-        body: JSON.stringify(body)
-      }
-    };
-  }
-
-  parseOpenAIResponse(data) {
-    if (data.error) {
-      throw new Error(`OpenAI API error: ${data.error.message}`);
-    }
-    
-    const text = data?.choices?.[0]?.message?.content;
-    if (!text) {
-      throw new Error('No content generated');
-    }
-    
-    return text;
-  }
-
-  // Cohere API formatting
-  formatCohereRequest(prompt, config = {}) {
-    const provider = this.providers.find(p => p.name === 'cohere');
-    const url = provider.baseUrl;
-    const body = {
-      model: 'command-light',
-      prompt: `You are PreAid, an AI health assistant. Provide medical advice for: ${prompt}`,
-      max_tokens: config.maxTokens || 2048,
-      temperature: config.temperature || 0.7,
-      k: config.topK || 40,
-      p: config.topP || 0.8
-    };
-    
-    return {
-      url,
-      options: {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${provider.apiKey}`
-        },
-        body: JSON.stringify(body)
-      }
-    };
-  }
-
-  parseCohereResponse(data) {
-    if (data.message && data.message.includes('error')) {
-      throw new Error(`Cohere API error: ${data.message}`);
-    }
-    
-    const text = data?.generations?.[0]?.text;
-    if (!text) {
-      throw new Error('No content generated');
-    }
-    
-    return text.trim();
-  }
-
-  // Anthropic API formatting
-  formatAnthropicRequest(prompt, config = {}) {
-    const provider = this.providers.find(p => p.name === 'anthropic');
-    const url = provider.baseUrl;
-    const body = {
-      model: 'claude-3-sonnet-20240229',
-      max_tokens: config.maxTokens || 2048,
-      temperature: config.temperature || 0.7,
-      messages: [
-        { role: 'user', content: prompt }
-      ]
-    };
-    
-    return {
-      url,
-      options: {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${provider.apiKey}`,
-          'anthropic-version': '2023-06-01'
-        },
-        body: JSON.stringify(body)
-      }
-    };
-  }
-
-  parseAnthropicResponse(data) {
-    if (data.error) {
-      throw new Error(`Anthropic API error: ${data.error.message}`);
-    }
-    
-    const text = data?.content?.[0]?.text;
-    if (!text) {
-      throw new Error('No content generated');
-    }
-    
-    return text;
-  }
-
-  // Main method to generate response with automatic fallback
-  async generateResponse(prompt, config = {}) {
-    if (this.availableProviders.length === 0) {
-      throw new Error('No AI providers configured');
-    }
-
-    const errors = [];
-    
-    for (const provider of this.availableProviders) {
-      console.log(`🔄 Trying ${provider.name}...`);
-      
-      try {
-        const { url, options } = provider.formatRequest(prompt, config);
-        
-        const response = await fetch(url, options);
-        
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(`HTTP ${response.status}: ${errorText}`);
-        }
-        
-        const data = await response.json();
-        const result = provider.parseResponse(data);
-        
-        console.log(`✅ Success with ${provider.name}`);
-        return {
-          success: true,
-          provider: provider.name,
-          content: result
-        };
-        
-      } catch (error) {
-        console.error(`❌ ${provider.name} failed:`, error.message);
-        errors.push({
-          provider: provider.name,
-          error: error.message
-        });
-        
-        // Continue to next provider
-        continue;
-      }
-    }
-    
-    // All providers failed
-    throw new Error(`All AI providers failed. Errors: ${JSON.stringify(errors)}`);
-  }
-
-  // Health check for available providers
-  getProviderStatus() {
-    return {
-      total: this.providers.length,
-      available: this.availableProviders.length,
-      providers: this.providers.map(p => ({
-        name: p.name,
-        configured: !!p.apiKey && p.apiKey !== 'your_api_key_here' && p.apiKey.length > 10
-      }))
-    };
-  }
+  const result = await genModel.generateContent(prompt);
+  const text = result.response.text();
+  if (!text) throw new Error('Gemini returned empty response');
+  return { provider: 'gemini', content: text };
 }
 
-// Export singleton instance
-let aiService;
-function getAIService() {
-  if (!aiService) {
-    aiService = new MultiAIService();
-  }
-  return aiService;
+// ─── OPENAI ───────────────────────────────────────────────────────────────────
+async function callOpenAI(prompt) {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) throw new Error('OPENAI_API_KEY not set');
+
+  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+    body: JSON.stringify({
+      model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
+      messages: [{ role: 'user', content: prompt }],
+      temperature: 0.7,
+      max_tokens: 2048
+    })
+  });
+
+  if (!response.ok) throw new Error(`OpenAI HTTP ${response.status}`);
+  const data = await response.json();
+  if (data.error) throw new Error(`OpenAI: ${data.error.message}`);
+  const text = data?.choices?.[0]?.message?.content;
+  if (!text) throw new Error('OpenAI returned empty response');
+  return { provider: 'openai', content: text };
 }
 
-// Netlify Function Handler
-exports.handler = async (event, context) => {
-  if (event.httpMethod !== 'POST') {
-    return {
-      statusCode: 405,
-      body: JSON.stringify({ error: 'Method not allowed' })
-    };
+// ─── COHERE ───────────────────────────────────────────────────────────────────
+async function callCohere(prompt) {
+  const apiKey = process.env.COHERE_API_KEY;
+  if (!apiKey) throw new Error('COHERE_API_KEY not set');
+
+  const response = await fetch('https://api.cohere.com/v2/chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+    body: JSON.stringify({
+      model: process.env.COHERE_MODEL || 'command-r',
+      messages: [{ role: 'user', content: prompt }],
+      max_tokens: 2048
+    })
+  });
+
+  if (!response.ok) throw new Error(`Cohere HTTP ${response.status}`);
+  const data = await response.json();
+  const text = data?.message?.content?.[0]?.text;
+  if (!text) throw new Error('Cohere returned empty response');
+  return { provider: 'cohere', content: text };
+}
+
+// ─── ANTHROPIC ────────────────────────────────────────────────────────────────
+async function callAnthropic(prompt) {
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) throw new Error('ANTHROPIC_API_KEY not set');
+
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01'
+    },
+    body: JSON.stringify({
+      model: process.env.ANTHROPIC_MODEL || 'claude-3-haiku-20240307',
+      messages: [{ role: 'user', content: prompt }],
+      max_tokens: 2048
+    })
+  });
+
+  if (!response.ok) throw new Error(`Anthropic HTTP ${response.status}`);
+  const data = await response.json();
+  if (data.error) throw new Error(`Anthropic: ${data.error.message}`);
+  const text = data?.content?.[0]?.text;
+  if (!text) throw new Error('Anthropic returned empty response');
+  return { provider: 'anthropic', content: text };
+}
+
+// ─── MAIN: try providers in order ─────────────────────────────────────────────
+async function getAIResponse(prompt) {
+  const providers = [callGemini, callOpenAI, callCohere, callAnthropic];
+  const errors = [];
+
+  for (const provider of providers) {
+    try {
+      const result = await provider(prompt);
+      console.log(`✅ Success with: ${result.provider}`);
+      return result;
+    } catch (err) {
+      console.warn(`❌ ${err.message}`);
+      errors.push(err.message);
+    }
   }
 
+  throw new Error(`All AI providers failed:\n${errors.join('\n')}`);
+}
+
+// ─── NETLIFY HANDLER ──────────────────────────────────────────────────────────
+exports.handler = async (event) => {
   const headers = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type',
@@ -298,129 +121,51 @@ exports.handler = async (event, context) => {
     'Content-Type': 'application/json'
   };
 
-  if (event.httpMethod === 'OPTIONS') {
-    return { statusCode: 200, headers, body: '' };
-  }
+  if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers, body: '' };
+  if (event.httpMethod !== 'POST') return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
 
   try {
-    const { message, history, isPartialHistory, isFullAnalysisRequest } = JSON.parse(event.body);
-    
-    if (!message) {
-      return {
-        statusCode: 400,
-        headers,
-        body: JSON.stringify({ error: 'Message is required' })
-      };
-    }
+    const { message, history, isPartialHistory, isFullAnalysisRequest } = JSON.parse(event.body || '{}');
 
-    // Get the multi-AI service instance
-    const aiService = getAIService();
-    
-    // Check if any providers are available
-    const providerStatus = aiService.getProviderStatus();
-    if (providerStatus.available === 0) {
-      return {
-        statusCode: 500,
-        headers,
-        body: JSON.stringify({ 
-          error: 'No AI providers configured', 
-          details: 'Please add at least one API key to environment variables',
-          providers: providerStatus.providers
-        })
-      };
-    }
+    if (!message) return { statusCode: 400, headers, body: JSON.stringify({ error: 'Message is required' }) };
 
-    const historyContext = history && history.length > 0 ? 
-      `\\n\\nMEDICAL HISTORY CONTEXT: ${history.map(h => `"${h.issue}" (${h.timeAgo})`).join(', ')}\\n\\nIMPORTANT: Start your response by acknowledging the connection between current symptoms and previous medical history.` : '';
+    const historyContext = history && history.length > 0
+      ? `\n\nMEDICAL HISTORY CONTEXT: ${history.map(h => `"${h.issue}" (${h.timeAgo})`).join(', ')}\n\nIMPORTANT: Acknowledge the connection between current symptoms and previous medical history.`
+      : '';
 
-    const partialHistoryNote = isPartialHistory && !isFullAnalysisRequest ? 
-      '\\n\\n**Note: If you want a full analysis of your medical history, please ask the same question again.**' : '';
+    const fullAnalysisNote = isFullAnalysisRequest
+      ? '\n\n**FULL MEDICAL HISTORY ANALYSIS COMPLETED**' : '';
 
-    const fullAnalysisNote = isFullAnalysisRequest ? 
-      '\\n\\n**FULL MEDICAL HISTORY ANALYSIS COMPLETED** - This response includes comprehensive analysis of your medical history.' : '';
+    const partialHistoryNote = isPartialHistory && !isFullAnalysisRequest
+      ? '\n\n**Note: Ask the same question again for a full analysis of your medical history.**' : '';
 
-    const rules = `You are PreAid, an emergency AI health assistant.
-- If NOT health-related: say "This ain't a medical emergency!" and answer briefly.
-- If serious: start with ambulance warning and give immediate safe steps.
-- For high-risk (CPR/choking/spinal): include strong safety warning.
-- Keep it concise and actionable.
-- End with the disclaimer.`;
+    const prompt = `You are PreAid, an emergency AI health assistant for India.
+- If NOT health-related: say "This isn't a health-related issue" and answer briefly.
+- If serious: start with Indian emergency numbers (108, 102, 100, 101) and give immediate safe steps.
+- For high-risk procedures (CPR, choking, spinal injury): include a strong safety warning that untrained people should wait for professionals.
+- Always include Indian emergency numbers: National Emergency: 108, Ambulance: 102, Police: 100, Fire: 101.
+- Keep responses concise and actionable.
+- End every response with: "⚠️ **Disclaimer:** I'm an AI assistant providing general information only. Always consult qualified healthcare professionals for proper medical diagnosis and treatment."
 
-    const userPrompt = `${rules}
+Question: "${message}"${historyContext}${fullAnalysisNote}${partialHistoryNote}`;
 
-Question: "${message}"${historyContext}
-
-${fullAnalysisNote}${partialHistoryNote}`;
-
-    console.log(`🚀 Using multi-AI service with ${providerStatus.available} available providers:`, 
-      providerStatus.providers.filter(p => p.configured).map(p => p.name).join(', '));
-    
-    // Use the multi-AI service with automatic fallback
-    const aiResponse = await aiService.generateResponse(userPrompt, {
-      temperature: 0.7,
-      maxTokens: 2048,
-      topP: 0.8,
-      topK: 40
-    });
-    
-    console.log(`✅ Successfully got response from: ${aiResponse.provider}`);
+    const aiResponse = await getAIResponse(prompt);
     let advice = aiResponse.content;
-    
-    // If the response is too short, try with a more detailed prompt
-    if (!advice || advice.length < 50) {
-      console.log('⚠️ Response too short, trying with detailed prompt...');
-      const detailedPrompt = `You are PreAid, an AI health assistant. Provide comprehensive first aid advice for: "${message}".
-- Include step-by-step instructions
-- Add emergency warnings if necessary
-- Provide 6-10 actionable points
-- End with the medical disclaimer`;
-      
-      const retryResponse = await aiService.generateResponse(detailedPrompt, {
-        temperature: 0.6,
-        maxTokens: 1500
-      });
-      
-      advice = retryResponse.content;
-      console.log(`✅ Retry successful with: ${retryResponse.provider}`);
-    }
 
-    // Add partial history warning if needed
     if (isPartialHistory && !isFullAnalysisRequest && !advice.includes('full analysis')) {
-      const disclaimerIndex = advice.lastIndexOf('⚠️ **Disclaimer:**');
-      if (disclaimerIndex > -1) {
-        const beforeDisclaimer = advice.substring(0, disclaimerIndex);
-        const disclaimer = advice.substring(disclaimerIndex);
-        advice = beforeDisclaimer + '\\n\\n**📋 Quick Analysis:** If you want a full analysis of your medical history, please ask the same question again.\\n\\n' + disclaimer;
-      } else {
-        advice += '\\n\\n**📋 Quick Analysis:** If you want a full analysis of your medical history, please ask the same question again.';
-      }
+      advice += '\n\n**📋 Quick Analysis:** Ask the same question again for a full analysis of your medical history.';
     }
 
-    return {
-      statusCode: 200,
-      headers,
-      body: JSON.stringify({ advice })
-    };
+    return { statusCode: 200, headers, body: JSON.stringify({ advice }) };
 
   } catch (error) {
-    console.error('Multi-AI service error:', error);
-    
-    // Try to parse the error for more details
-    let errorDetails = error?.message || String(error);
-    let statusCode = 500;
-    
-    // If all providers failed, show more helpful error
-    if (errorDetails.includes('All AI providers failed')) {
-      statusCode = 502;
-      errorDetails = 'All AI services are currently unavailable. Please try again in a few minutes.';
-    }
-    
+    console.error('AI service error:', error.message);
     return {
-      statusCode,
+      statusCode: 502,
       headers,
-      body: JSON.stringify({ 
-        error: 'AI service temporarily unavailable', 
-        details: errorDetails,
+      body: JSON.stringify({
+        error: 'AI service temporarily unavailable',
+        details: error.message,
         timestamp: new Date().toISOString()
       })
     };
