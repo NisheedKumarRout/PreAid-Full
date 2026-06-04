@@ -1,4 +1,5 @@
-// Supabase Configuration
+// Supabase Configuration (from env-config.js, browser-safe)
+// AI API keys (Gemini, OpenAI etc.) are server-side only — never in the browser
 const SUPABASE_URL = window.ENV?.SUPABASE_URL || '';
 const SUPABASE_ANON_KEY = window.ENV?.SUPABASE_ANON_KEY || '';
 
