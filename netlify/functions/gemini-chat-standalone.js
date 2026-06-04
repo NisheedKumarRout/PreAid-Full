@@ -1,14 +1,15 @@
 // Standalone Netlify Function — PreAid AI Chat
-// Uses the official Google Generative AI SDK for Gemini (permanent, version-safe)
-// Falls back to OpenAI, Cohere, and Anthropic if Gemini is unavailable
+// Uses official Google AI SDK + multiple fallback providers
+// Model names are configurable via Netlify env vars — no code changes needed when models update
 
 // ─── GEMINI via official SDK ──────────────────────────────────────────────────
 async function callGemini(prompt) {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) throw new Error('GEMINI_API_KEY not set');
 
-  // Model name is read from env var — change it in Netlify dashboard without touching code
-  const model = process.env.GEMINI_MODEL || 'gemini-2.0-flash';
+  // gemini-1.5-flash: free tier, 15 req/min, 1500 req/day — most reliable free model
+  // Change GEMINI_MODEL in Netlify env vars to update without touching code
+  const model = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
 
   const { GoogleGenerativeAI } = require('@google/generative-ai');
   const genAI = new GoogleGenerativeAI(apiKey);
@@ -17,7 +18,7 @@ async function callGemini(prompt) {
   const result = await genModel.generateContent(prompt);
   const text = result.response.text();
   if (!text) throw new Error('Gemini returned empty response');
-  return { provider: 'gemini', content: text };
+  return { provider: `gemini (${model})`, content: text };
 }
 
 // ─── OPENAI ───────────────────────────────────────────────────────────────────
@@ -49,21 +50,49 @@ async function callCohere(prompt) {
   const apiKey = process.env.COHERE_API_KEY;
   if (!apiKey) throw new Error('COHERE_API_KEY not set');
 
-  const response = await fetch('https://api.cohere.com/v2/chat', {
+  // Using v1/generate — more stable for free tier keys
+  const response = await fetch('https://api.cohere.ai/v1/generate', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
     body: JSON.stringify({
-      model: process.env.COHERE_MODEL || 'command-r',
-      messages: [{ role: 'user', content: prompt }],
-      max_tokens: 2048
+      model: process.env.COHERE_MODEL || 'command',
+      prompt: `You are PreAid, an AI health assistant. Answer this health question clearly and helpfully: ${prompt}`,
+      max_tokens: 2048,
+      temperature: 0.7
     })
   });
 
-  if (!response.ok) throw new Error(`Cohere HTTP ${response.status}`);
+  if (!response.ok) {
+    const err = await response.text();
+    throw new Error(`Cohere HTTP ${response.status}: ${err.substring(0, 200)}`);
+  }
   const data = await response.json();
-  const text = data?.message?.content?.[0]?.text;
+  const text = data?.generations?.[0]?.text;
   if (!text) throw new Error('Cohere returned empty response');
-  return { provider: 'cohere', content: text };
+  return { provider: 'cohere', content: text.trim() };
+}
+
+// ─── HUGGINGFACE (free, no payment needed) ──────────────────────────────────────────────
+function callHuggingFace(prompt) {
+  const apiKey = process.env.HUGGINGFACE_API_KEY;
+  if (!apiKey) throw new Error('HUGGINGFACE_API_KEY not set');
+
+  // Using Mistral-7B — free, fast, good quality
+  const model = process.env.HUGGINGFACE_MODEL || 'mistralai/Mistral-7B-Instruct-v0.2';
+  return fetch(`https://api-inference.huggingface.co/models/${model}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+    body: JSON.stringify({
+      inputs: `<s>[INST] You are PreAid, an AI health assistant. ${prompt} [/INST]`,
+      parameters: { max_new_tokens: 1024, temperature: 0.7, return_full_text: false }
+    })
+  }).then(async r => {
+    if (!r.ok) throw new Error(`HuggingFace HTTP ${r.status}`);
+    const data = await r.json();
+    const text = Array.isArray(data) ? data[0]?.generated_text : data?.generated_text;
+    if (!text) throw new Error('HuggingFace returned empty response');
+    return { provider: 'huggingface', content: text.trim() };
+  });
 }
 
 // ─── ANTHROPIC ────────────────────────────────────────────────────────────────
@@ -93,9 +122,10 @@ async function callAnthropic(prompt) {
   return { provider: 'anthropic', content: text };
 }
 
-// ─── MAIN: try providers in order ─────────────────────────────────────────────
+// ─── MAIN: try providers in order ─────────────────────────────────────────────────
 async function getAIResponse(prompt) {
-  const providers = [callGemini, callOpenAI, callCohere, callAnthropic];
+  // Try in order: Gemini → OpenAI → Cohere → HuggingFace → Anthropic
+  const providers = [callGemini, callOpenAI, callCohere, callHuggingFace, callAnthropic];
   const errors = [];
 
   for (const provider of providers) {
