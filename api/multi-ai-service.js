@@ -7,7 +7,7 @@ class MultiAIService {
       {
         name: 'gemini',
         apiKey: process.env.GEMINI_API_KEY,
-        baseUrl: 'https://generativelanguage.googleapis.com/v1/models/gemini-2.5-pro:generateContent',
+        baseUrl: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
         formatRequest: this.formatGeminiRequest.bind(this),
         parseResponse: this.parseGeminiResponse.bind(this),
         tier: 'free',
