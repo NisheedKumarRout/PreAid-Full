@@ -6,7 +6,7 @@ const SUPABASE_ANON_KEY = window.ENV?.SUPABASE_ANON_KEY || '';
 const isSupabaseConfigured = !!SUPABASE_URL && !!SUPABASE_ANON_KEY;
 
 // Initialize Supabase client
-let supabase;
+var supabase;
 try {
   if (!isSupabaseConfigured) {
     console.warn('[PreAid] Supabase not configured — URL or Key is missing. Auth will not work.');
