@@ -17,31 +17,43 @@ async function callCohere(prompt) {
   const apiKey = process.env.COHERE_API_KEY;
   if (!apiKey) throw new Error('COHERE_API_KEY not set');
 
-  const model = process.env.COHERE_MODEL || 'command-r-plus';
+  const modelsToTry = process.env.COHERE_MODEL
+    ? [process.env.COHERE_MODEL]
+    : ['command-r', 'command', 'command-light'];
 
-  const response = await fetch('https://api.cohere.com/v2/chat', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${apiKey}`,
-      'Accept': 'application/json'
-    },
-    body: JSON.stringify({
-      model,
-      messages: [
-        { role: 'user', content: `${SYSTEM_PROMPT}\n\n${prompt}` }
-      ]
-    })
-  });
+  const errors = [];
+  for (const model of modelsToTry) {
+    try {
+      console.log(`Trying Cohere model: ${model}...`);
+      const response = await fetch('https://api.cohere.com/v2/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`,
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          model,
+          messages: [
+            { role: 'user', content: `${SYSTEM_PROMPT}\n\n${prompt}` }
+          ]
+        })
+      });
 
-  if (!response.ok) {
-    const err = await response.text();
-    throw new Error(`Cohere HTTP ${response.status}: ${err.substring(0, 300)}`);
+      if (!response.ok) {
+        const err = await response.text();
+        throw new Error(`HTTP ${response.status}: ${err.substring(0, 200)}`);
+      }
+      const data = await response.json();
+      const text = data?.message?.content?.[0]?.text;
+      if (!text) throw new Error('Empty response');
+      return { provider: `cohere (${model})`, content: text };
+    } catch (err) {
+      console.warn(`Cohere model ${model} failed: ${err.message}`);
+      errors.push(`${model}: ${err.message}`);
+    }
   }
-  const data = await response.json();
-  const text = data?.message?.content?.[0]?.text;
-  if (!text) throw new Error('Cohere returned empty response');
-  return { provider: `cohere (${model})`, content: text };
+  throw new Error(`All Cohere models failed: ${errors.join('; ')}`);
 }
 
 // ─── HUGGINGFACE (free — OpenAI-compatible router) ─────────────────────────────
@@ -49,37 +61,53 @@ async function callHuggingFace(prompt) {
   const apiKey = process.env.HUGGINGFACE_API_KEY;
   if (!apiKey) throw new Error('HUGGINGFACE_API_KEY not set');
 
-  const model = process.env.HUGGINGFACE_MODEL || 'Qwen/Qwen2.5-72B-Instruct';
+  const modelsToTry = process.env.HUGGINGFACE_MODEL
+    ? [process.env.HUGGINGFACE_MODEL]
+    : [
+        'meta-llama/Llama-3.2-3B-Instruct',
+        'microsoft/Phi-3.5-mini-instruct',
+        'Qwen/Qwen2.5-72B-Instruct',
+        'HuggingFaceH4/zephyr-7b-beta'
+      ];
 
-  // Use HuggingFace's OpenAI-compatible router — more reliable than raw inference API
-  const response = await fetch(
-    `https://router.huggingface.co/hf-inference/v1/chat/completions`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
-      },
-      body: JSON.stringify({
-        model,
-        messages: [
-          { role: 'system', content: SYSTEM_PROMPT },
-          { role: 'user', content: prompt }
-        ],
-        max_tokens: 1024,
-        temperature: 0.7
-      })
+  const errors = [];
+  for (const model of modelsToTry) {
+    try {
+      console.log(`Trying Hugging Face model: ${model}...`);
+      const response = await fetch(
+        `https://router.huggingface.co/hf-inference/v1/chat/completions`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`
+          },
+          body: JSON.stringify({
+            model,
+            messages: [
+              { role: 'system', content: SYSTEM_PROMPT },
+              { role: 'user', content: prompt }
+            ],
+            max_tokens: 1024,
+            temperature: 0.7
+          })
+        }
+      );
+
+      if (!response.ok) {
+        const err = await response.text();
+        throw new Error(`HTTP ${response.status}: ${err.substring(0, 200)}`);
+      }
+      const data = await response.json();
+      const text = data?.choices?.[0]?.message?.content;
+      if (!text) throw new Error('Empty response');
+      return { provider: `huggingface (${model})`, content: text.trim() };
+    } catch (err) {
+      console.warn(`HuggingFace model ${model} failed: ${err.message}`);
+      errors.push(`${model}: ${err.message}`);
     }
-  );
-
-  if (!response.ok) {
-    const err = await response.text();
-    throw new Error(`HuggingFace HTTP ${response.status}: ${err.substring(0, 300)}`);
   }
-  const data = await response.json();
-  const text = data?.choices?.[0]?.message?.content;
-  if (!text) throw new Error('HuggingFace returned empty response');
-  return { provider: `huggingface (${model})`, content: text.trim() };
+  throw new Error(`All Hugging Face models failed: ${errors.join('; ')}`);
 }
 
 // ─── GEMINI (raw fetch, tries multiple models) ─────────────────────────────────
@@ -90,7 +118,7 @@ async function callGemini(prompt) {
   // Try models in order — if one returns 404 we try the next
   const modelsToTry = process.env.GEMINI_MODEL
     ? [process.env.GEMINI_MODEL]
-    : ['gemini-1.5-flash', 'gemini-1.5-flash-001', 'gemini-1.5-flash-8b', 'gemini-1.0-pro'];
+    : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-001', 'gemini-1.5-flash-8b', 'gemini-1.0-pro'];
 
   const fullPrompt = `${SYSTEM_PROMPT}\n\n${prompt}`;
 
