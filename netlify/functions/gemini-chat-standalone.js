@@ -19,7 +19,7 @@ async function callCohere(prompt) {
 
   const modelsToTry = process.env.COHERE_MODEL
     ? [process.env.COHERE_MODEL]
-    : ['command-r', 'command', 'command-light'];
+    : ['command-r-08-2024', 'command-a-03-2025', 'command-r7b-12-2024', 'command-r-plus-08-2024', 'command-a-plus-05-2026'];
 
   const errors = [];
   for (const model of modelsToTry) {
