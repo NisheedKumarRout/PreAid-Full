@@ -561,15 +561,30 @@ async function sendMessage() {
   
   // Show thinking animation
   const loadingId = addMessage('🤔 Analyzing your query...', 'ai', true);
-  
+
+  // Update loading text after 5s to show it's still working
+  const loadingTimer = setTimeout(() => {
+    const el = document.getElementById(loadingId);
+    const span = el && el.querySelector('.loading span');
+    if (span) span.textContent = '⏳ Trying all available AI providers...';
+  }, 5000);
+
+  // Update loading text at 15s to warn almost timeout
+  const loadingTimer2 = setTimeout(() => {
+    const el = document.getElementById(loadingId);
+    const span = el && el.querySelector('.loading span');
+    if (span) span.textContent = '🔄 Still working, almost done...';
+  }, 15000);
+
   try {
     const advice = await getGeminiAdvice(message);
     
-    // Remove loading message completely
+    clearTimeout(loadingTimer);
+    clearTimeout(loadingTimer2);
+
+    // Remove loading message
     const loadingElement = document.getElementById(loadingId);
-    if (loadingElement) {
-      loadingElement.remove();
-    }
+    if (loadingElement) loadingElement.remove();
     
     if (advice) {
       addMessageWithTypewriter(advice, 'ai');
@@ -578,13 +593,20 @@ async function sendMessage() {
       throw new Error('No advice generated');
     }
   } catch (error) {
-    // Remove loading message completely
+    clearTimeout(loadingTimer);
+    clearTimeout(loadingTimer2);
+
+    // Remove loading message
     const loadingElement = document.getElementById(loadingId);
-    if (loadingElement) {
-      loadingElement.remove();
-    }
+    if (loadingElement) loadingElement.remove();
+
+    const isTimeout = error.name === 'AbortError' || (error.message && error.message.includes('timeout'));
+    const prefix = isTimeout
+      ? '⏱️ **Response timed out** — Showing offline guidance instead:\n\n'
+      : '📶 **AI is currently unavailable** — Showing offline guidance:\n\n';
+
     const offlineAdvice = getOfflineHealthAdvice(message);
-    addMessageWithTypewriter('🏥 **PreAid Offline Mode** - ' + offlineAdvice, 'ai');
+    addMessageWithTypewriter(prefix + offlineAdvice, 'ai');
   }
 }
 
@@ -594,7 +616,7 @@ let consecutiveQuestionCount = 0;
 let partialHistoryUsed = false;
 
 async function getGeminiAdvice(issue) {
-  // Check for consecutive identical questions
+  // Track consecutive identical questions
   if (issue.trim().toLowerCase() === lastQuestion.toLowerCase()) {
     consecutiveQuestionCount++;
   } else {
@@ -606,14 +628,20 @@ async function getGeminiAdvice(issue) {
   // Get relevant history with timeout
   const contextHistory = await getRelevantHistoryWithTimeout(issue);
   
+  // 20-second hard timeout — if all providers take longer, give up and show offline
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => {
+    controller.abort();
+    console.warn('[PreAid] AI request timed out after 20 seconds');
+  }, 20000);
+
   try {
-    console.log('Trying Netlify Function...');
-    console.log('Current URL:', window.location.href);
-    
-    // Try Netlify Function first (production)
-    const response = await fetch('/.netlify/functions/gemini-chat', {
+    console.log('[PreAid] Calling gemini-chat-standalone with full AI fallback chain...');
+
+    const response = await fetch('/.netlify/functions/gemini-chat-standalone', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      signal: controller.signal,
       body: JSON.stringify({
         message: issue,
         history: contextHistory.history,
@@ -622,34 +650,28 @@ async function getGeminiAdvice(issue) {
       })
     });
 
-    console.log('Netlify Function response:', response.status, response.statusText);
+    clearTimeout(timeoutId);
+    console.log('[PreAid] Response status:', response.status);
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Netlify Function error details:', errorText);
-      console.error('Response status:', response.status);
-      console.error('Response headers:', [...response.headers.entries()]);
-      
-      // Parse error if it's JSON
-      try {
-        const errorJson = JSON.parse(errorText);
-        console.error('Parsed error:', errorJson);
-      } catch (e) {
-        console.error('Raw error text:', errorText);
-      }
-      
-      throw new Error(`Netlify function failed: ${response.status} - ${errorText}`);
+      console.error('[PreAid] Function error:', response.status, errorText);
+      throw new Error(`AI function failed: ${response.status}`);
     }
 
     const data = await response.json();
-    console.log('Netlify Function success!', data);
+    console.log('[PreAid] AI response received successfully from:', data.provider || 'unknown');
     return data.advice;
+
   } catch (error) {
-    console.log('Netlify function error:', error.message);
-    console.log('Error details:', error);
-    console.log('Trying direct API fallback...');
-    
-    // No direct API fallback on client (security). Fail so offline advice kicks in.
+    clearTimeout(timeoutId);
+    if (error.name === 'AbortError') {
+      console.warn('[PreAid] Request aborted after 20s timeout');
+      const timeoutError = new Error('Request timed out after 20 seconds');
+      timeoutError.name = 'AbortError';
+      throw timeoutError;
+    }
+    console.error('[PreAid] AI call failed:', error.message);
     throw error;
   }
 }
