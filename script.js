@@ -1,18 +1,23 @@
 // Supabase Configuration
-const SUPABASE_URL = window.ENV?.SUPABASE_URL || 'SUPABASE_URL_NOT_CONFIGURED';
-const SUPABASE_ANON_KEY = window.ENV?.SUPABASE_ANON_KEY || 'SUPABASE_KEY_NOT_CONFIGURED';
+const SUPABASE_URL = window.ENV?.SUPABASE_URL || '';
+const SUPABASE_ANON_KEY = window.ENV?.SUPABASE_ANON_KEY || '';
+
+// Track if Supabase is properly configured
+const isSupabaseConfigured = !!SUPABASE_URL && !!SUPABASE_ANON_KEY;
 
 // Initialize Supabase client
 let supabase;
 try {
-  if (typeof window.supabase !== 'undefined') {
+  if (!isSupabaseConfigured) {
+    console.warn('[PreAid] Supabase not configured — URL or Key is missing. Auth will not work.');
+  } else if (typeof window.supabase !== 'undefined') {
     supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    console.log('Supabase initialized successfully');
+    console.log('[PreAid] Supabase initialized successfully');
   } else {
-    console.error('Supabase library not loaded');
+    console.error('[PreAid] Supabase JS library not loaded from CDN.');
   }
 } catch (error) {
-  console.error('Error initializing Supabase:', error);
+  console.error('[PreAid] Error initializing Supabase:', error);
 }
 
 // Global state
@@ -128,9 +133,45 @@ function initializeSpeechSynthesis() {
 }
 
 // Authentication
+function showConfigError(message) {
+  // Show a visible error banner on the auth modal
+  let banner = document.getElementById('config-error-banner');
+  if (!banner) {
+    banner = document.createElement('div');
+    banner.id = 'config-error-banner';
+    banner.style.cssText = 'background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:12px 16px;margin:12px 0;font-size:13px;color:#856404;line-height:1.5;';
+    const authContent = document.querySelector('.auth-content');
+    if (authContent) {
+      const authHeader = authContent.querySelector('.auth-header');
+      if (authHeader) authHeader.after(banner);
+      else authContent.prepend(banner);
+    }
+  }
+  banner.innerHTML = message;
+  banner.style.display = 'block';
+}
+
 function showAuthModal() {
   document.getElementById('auth-modal').classList.remove('hidden');
   document.getElementById('app').classList.add('hidden');
+
+  // Show helpful error if Supabase is not configured
+  if (!isSupabaseConfigured) {
+    showConfigError(
+      '<strong>⚠️ Configuration Error</strong><br>' +
+      'The app is not connected to the database yet.<br>' +
+      'If you are the owner: please set <code>SUPABASE_URL</code> and <code>SUPABASE_ANON_KEY</code> ' +
+      'in your Netlify Environment Variables and trigger a new deploy.<br>' +
+      '<em>You can still use Guest Mode below.</em>'
+    );
+    // Disable Google and Email buttons
+    const googleBtn = document.getElementById('google-signin');
+    const emailBtn = document.getElementById('email-signin');
+    const emailSignupBtn = document.getElementById('email-signup');
+    if (googleBtn) { googleBtn.disabled = true; googleBtn.style.opacity = '0.5'; googleBtn.title = 'Not configured — set SUPABASE_URL in Netlify'; }
+    if (emailBtn) { emailBtn.disabled = true; emailBtn.style.opacity = '0.5'; emailBtn.title = 'Not configured — set SUPABASE_URL in Netlify'; }
+    if (emailSignupBtn) { emailSignupBtn.disabled = true; emailSignupBtn.style.opacity = '0.5'; emailSignupBtn.title = 'Not configured — set SUPABASE_URL in Netlify'; }
+  }
 }
 
 function showApp() {
