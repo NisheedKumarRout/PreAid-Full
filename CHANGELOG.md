@@ -6,3 +6,4 @@
 - `2026-06-05 20:57:35 IST`: feat(medication): add basic dosage timer reminder logic
 - `2026-06-06 13:51:58 IST`: feat(offline): enable local caching of critical first aid guides
 - `2026-06-06 15:59:23 IST`: fix(chat): handle network timeout with automatic fallback to offline rules
+- `2026-06-06 17:58:23 IST`: perf(assets): optimize first-aid illustration loading and SVG icons
