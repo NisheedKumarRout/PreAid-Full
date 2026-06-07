@@ -7,3 +7,4 @@
 - `2026-06-06 13:51:58 IST`: feat(offline): enable local caching of critical first aid guides
 - `2026-06-06 15:59:23 IST`: fix(chat): handle network timeout with automatic fallback to offline rules
 - `2026-06-06 17:58:23 IST`: perf(assets): optimize first-aid illustration loading and SVG icons
+- `2026-06-07 11:37:03 IST`: refactor(models): improve Cohere and Gemini model fallback resolution
