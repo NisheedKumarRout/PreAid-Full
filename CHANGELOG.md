@@ -10,3 +10,4 @@
 - `2026-06-07 11:37:03 IST`: refactor(models): improve Cohere and Gemini model fallback resolution
 - `2026-06-07 18:06:17 IST`: docs(deployment): update deployment security checklist and headers
 - `2026-06-08 13:29:17 IST`: feat(burns): implement minor vs severe burn classification steps
+- `2026-06-08 15:56:06 IST`: test(triage): add unit checks for triage risk categorization
