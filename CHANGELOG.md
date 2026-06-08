@@ -9,3 +9,4 @@
 - `2026-06-06 17:58:23 IST`: perf(assets): optimize first-aid illustration loading and SVG icons
 - `2026-06-07 11:37:03 IST`: refactor(models): improve Cohere and Gemini model fallback resolution
 - `2026-06-07 18:06:17 IST`: docs(deployment): update deployment security checklist and headers
+- `2026-06-08 13:29:17 IST`: feat(burns): implement minor vs severe burn classification steps
