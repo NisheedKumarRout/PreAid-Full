@@ -11,3 +11,4 @@
 - `2026-06-07 18:06:17 IST`: docs(deployment): update deployment security checklist and headers
 - `2026-06-08 13:29:17 IST`: feat(burns): implement minor vs severe burn classification steps
 - `2026-06-08 15:56:06 IST`: test(triage): add unit checks for triage risk categorization
+- `2026-06-08 18:35:12 IST`: fix(storage): ensure user emergency profile persists in IndexedDB
