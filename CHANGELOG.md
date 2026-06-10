@@ -15,3 +15,4 @@
 - `2026-06-09 11:08:42 IST`: fix(accessibility): improve contrast ratios on triage warning badges
 - `2026-06-09 13:47:29 IST`: feat(allergies): add anaphylaxis warning indicators and Epipen guide
 - `2026-06-09 17:41:15 IST`: feat(medication): add basic dosage timer reminder logic
+- `2026-06-10 12:01:01 IST`: feat(bites): add snakebite and insect sting emergency instructions
