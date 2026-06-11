@@ -17,3 +17,4 @@
 - `2026-06-09 17:41:15 IST`: feat(medication): add basic dosage timer reminder logic
 - `2026-06-10 12:01:01 IST`: feat(bites): add snakebite and insect sting emergency instructions
 - `2026-06-10 21:52:27 IST`: feat(speech): integrate voice input transcription for emergency queries
+- `2026-06-11 14:51:58 IST`: feat(burns): implement minor vs severe burn classification steps
