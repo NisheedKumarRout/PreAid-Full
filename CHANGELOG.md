@@ -18,3 +18,4 @@
 - `2026-06-10 12:01:01 IST`: feat(bites): add snakebite and insect sting emergency instructions
 - `2026-06-10 21:52:27 IST`: feat(speech): integrate voice input transcription for emergency queries
 - `2026-06-11 14:51:58 IST`: feat(burns): implement minor vs severe burn classification steps
+- `2026-06-11 16:54:16 IST`: fix(accessibility): improve contrast ratios on triage warning badges
