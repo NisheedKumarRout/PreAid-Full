@@ -20,3 +20,4 @@
 - `2026-06-11 14:51:58 IST`: feat(burns): implement minor vs severe burn classification steps
 - `2026-06-11 16:54:16 IST`: fix(accessibility): improve contrast ratios on triage warning badges
 - `2026-06-11 17:11:03 IST`: feat(offline): enable local caching of critical first aid guides
+- `2026-06-12 10:07:07 IST`: perf(assets): optimize first-aid illustration loading and SVG icons
