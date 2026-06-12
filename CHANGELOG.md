@@ -22,3 +22,4 @@
 - `2026-06-11 17:11:03 IST`: feat(offline): enable local caching of critical first aid guides
 - `2026-06-12 10:07:07 IST`: perf(assets): optimize first-aid illustration loading and SVG icons
 - `2026-06-12 17:37:02 IST`: docs(deployment): update deployment security checklist and headers
+- `2026-06-12 18:26:55 IST`: docs(firstaid): add CPR chest compression depth and rate guidance
