@@ -27,3 +27,4 @@
 - `2026-06-13 16:32:47 IST`: fix(chat): handle network timeout with automatic fallback to offline rules
 - `2026-06-13 16:45:07 IST`: fix(validation): sanitize user symptom search query inputs
 - `2026-06-14 10:37:46 IST`: feat(contacts): add local emergency and ambulance quick-dial shortcuts
+- `2026-06-14 17:51:37 IST`: fix(chat): handle network timeout with automatic fallback to offline rules
