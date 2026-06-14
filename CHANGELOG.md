@@ -26,3 +26,4 @@
 - `2026-06-13 10:23:53 IST`: feat(triage): add initial symptom questionnaire flow for emergency assessment
 - `2026-06-13 16:32:47 IST`: fix(chat): handle network timeout with automatic fallback to offline rules
 - `2026-06-13 16:45:07 IST`: fix(validation): sanitize user symptom search query inputs
+- `2026-06-14 10:37:46 IST`: feat(contacts): add local emergency and ambulance quick-dial shortcuts
