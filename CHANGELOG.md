@@ -30,3 +30,4 @@
 - `2026-06-14 17:51:37 IST`: fix(chat): handle network timeout with automatic fallback to offline rules
 - `2026-06-15 12:44:40 IST`: feat(fractures): add splinting and immobilization guidance
 - `2026-06-15 17:22:00 IST`: feat(heatstroke): add dehydration and heat exhaustion mitigation steps
+- `2026-06-16 18:38:58 IST`: feat(contacts): add local emergency and ambulance quick-dial shortcuts
