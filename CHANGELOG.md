@@ -34,3 +34,4 @@
 - `2026-06-16 20:21:34 IST`: style(theme): enhance dark mode styling for night-time emergency use
 - `2026-06-16 21:52:34 IST`: style(cards): refine emergency card border radius and elevation shadows
 - `2026-06-17 10:06:29 IST`: feat(offline): enable local caching of critical first aid guides
+- `2026-06-17 13:17:52 IST`: feat(offline): enable local caching of critical first aid guides
