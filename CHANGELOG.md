@@ -36,3 +36,4 @@
 - `2026-06-17 10:06:29 IST`: feat(offline): enable local caching of critical first aid guides
 - `2026-06-17 13:17:52 IST`: feat(offline): enable local caching of critical first aid guides
 - `2026-06-17 19:39:31 IST`: fix(ui): improve responsive spacing on emergency call action buttons
+- `2026-06-18 12:09:50 IST`: feat(fractures): add splinting and immobilization guidance
