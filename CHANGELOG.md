@@ -38,3 +38,4 @@
 - `2026-06-17 19:39:31 IST`: fix(ui): improve responsive spacing on emergency call action buttons
 - `2026-06-18 12:09:50 IST`: feat(fractures): add splinting and immobilization guidance
 - `2026-06-18 18:03:04 IST`: perf(scripts): defer non-critical analytics and preload triage modules
+- `2026-06-18 19:43:28 IST`: feat(speech): integrate voice input transcription for emergency queries
