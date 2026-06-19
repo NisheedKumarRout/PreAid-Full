@@ -41,3 +41,4 @@
 - `2026-06-18 19:43:28 IST`: feat(speech): integrate voice input transcription for emergency queries
 - `2026-06-19 12:33:15 IST`: feat(hypothermia): add cold exposure and frostbite first aid protocols
 - `2026-06-19 13:15:19 IST`: fix(storage): ensure user emergency profile persists in IndexedDB
+- `2026-06-19 21:36:25 IST`: perf(assets): optimize first-aid illustration loading and SVG icons
