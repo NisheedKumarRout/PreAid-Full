@@ -43,3 +43,4 @@
 - `2026-06-19 13:15:19 IST`: fix(storage): ensure user emergency profile persists in IndexedDB
 - `2026-06-19 21:36:25 IST`: perf(assets): optimize first-aid illustration loading and SVG icons
 - `2026-06-20 11:28:42 IST`: docs(api): update API integration guide with rate limit recommendations
+- `2026-06-20 12:32:16 IST`: feat(medication): add basic dosage timer reminder logic
