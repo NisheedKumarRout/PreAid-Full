@@ -45,3 +45,4 @@
 - `2026-06-20 11:28:42 IST`: docs(api): update API integration guide with rate limit recommendations
 - `2026-06-20 12:32:16 IST`: feat(medication): add basic dosage timer reminder logic
 - `2026-06-20 12:43:49 IST`: docs(triage): document wound dressing and hemorrhage control steps
+- `2026-06-21 11:05:04 IST`: docs(deployment): update deployment security checklist and headers
