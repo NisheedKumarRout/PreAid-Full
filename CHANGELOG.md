@@ -47,3 +47,4 @@
 - `2026-06-20 12:43:49 IST`: docs(triage): document wound dressing and hemorrhage control steps
 - `2026-06-21 11:05:04 IST`: docs(deployment): update deployment security checklist and headers
 - `2026-06-21 11:13:47 IST`: perf(scripts): defer non-critical analytics and preload triage modules
+- `2026-06-21 19:59:08 IST`: refactor(state): modularize symptom navigation state machine
