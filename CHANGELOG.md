@@ -48,3 +48,4 @@
 - `2026-06-21 11:05:04 IST`: docs(deployment): update deployment security checklist and headers
 - `2026-06-21 11:13:47 IST`: perf(scripts): defer non-critical analytics and preload triage modules
 - `2026-06-21 19:59:08 IST`: refactor(state): modularize symptom navigation state machine
+- `2026-06-22 11:02:47 IST`: feat(fractures): add splinting and immobilization guidance
