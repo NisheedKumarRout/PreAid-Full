@@ -51,3 +51,4 @@
 - `2026-06-22 11:02:47 IST`: feat(fractures): add splinting and immobilization guidance
 - `2026-06-22 13:30:16 IST`: feat(bites): add snakebite and insect sting emergency instructions
 - `2026-06-22 15:04:22 IST`: docs(triage): document wound dressing and hemorrhage control steps
+- `2026-06-23 12:48:15 IST`: fix(chat): handle network timeout with automatic fallback to offline rules
