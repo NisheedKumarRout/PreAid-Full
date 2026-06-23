@@ -52,3 +52,4 @@
 - `2026-06-22 13:30:16 IST`: feat(bites): add snakebite and insect sting emergency instructions
 - `2026-06-22 15:04:22 IST`: docs(triage): document wound dressing and hemorrhage control steps
 - `2026-06-23 12:48:15 IST`: fix(chat): handle network timeout with automatic fallback to offline rules
+- `2026-06-23 15:05:57 IST`: feat(allergies): add anaphylaxis warning indicators and Epipen guide
