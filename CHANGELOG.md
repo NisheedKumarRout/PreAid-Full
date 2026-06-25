@@ -57,3 +57,4 @@
 - `2026-06-24 17:44:11 IST`: fix(storage): ensure user emergency profile persists in IndexedDB
 - `2026-06-25 11:44:26 IST`: test(triage): add unit checks for triage risk categorization
 - `2026-06-25 14:26:53 IST`: docs(api): update API integration guide with rate limit recommendations
+- `2026-06-25 15:06:29 IST`: feat(contacts): add local emergency and ambulance quick-dial shortcuts
