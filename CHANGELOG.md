@@ -56,3 +56,4 @@
 - `2026-06-24 12:02:32 IST`: feat(choking): add Heimlich maneuver step-by-step visual prompts
 - `2026-06-24 17:44:11 IST`: fix(storage): ensure user emergency profile persists in IndexedDB
 - `2026-06-25 11:44:26 IST`: test(triage): add unit checks for triage risk categorization
+- `2026-06-25 14:26:53 IST`: docs(api): update API integration guide with rate limit recommendations
