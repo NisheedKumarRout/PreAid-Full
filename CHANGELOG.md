@@ -58,3 +58,4 @@
 - `2026-06-25 11:44:26 IST`: test(triage): add unit checks for triage risk categorization
 - `2026-06-25 14:26:53 IST`: docs(api): update API integration guide with rate limit recommendations
 - `2026-06-25 15:06:29 IST`: feat(contacts): add local emergency and ambulance quick-dial shortcuts
+- `2026-06-26 10:15:26 IST`: feat(poison): add poison control center guidance and hotline directory
