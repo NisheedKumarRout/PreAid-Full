@@ -60,3 +60,4 @@
 - `2026-06-25 15:06:29 IST`: feat(contacts): add local emergency and ambulance quick-dial shortcuts
 - `2026-06-26 10:15:26 IST`: feat(poison): add poison control center guidance and hotline directory
 - `2026-06-26 21:31:27 IST`: style(cards): refine emergency card border radius and elevation shadows
+- `2026-06-27 10:48:33 IST`: fix(storage): ensure user emergency profile persists in IndexedDB
