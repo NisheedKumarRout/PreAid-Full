@@ -62,3 +62,4 @@
 - `2026-06-26 21:31:27 IST`: style(cards): refine emergency card border radius and elevation shadows
 - `2026-06-27 10:48:33 IST`: fix(storage): ensure user emergency profile persists in IndexedDB
 - `2026-06-27 20:21:54 IST`: docs(triage): document wound dressing and hemorrhage control steps
+- `2026-06-27 21:56:27 IST`: feat(burns): implement minor vs severe burn classification steps
