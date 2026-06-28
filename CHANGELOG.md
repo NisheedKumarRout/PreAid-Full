@@ -63,3 +63,4 @@
 - `2026-06-27 10:48:33 IST`: fix(storage): ensure user emergency profile persists in IndexedDB
 - `2026-06-27 20:21:54 IST`: docs(triage): document wound dressing and hemorrhage control steps
 - `2026-06-27 21:56:27 IST`: feat(burns): implement minor vs severe burn classification steps
+- `2026-06-28 13:33:50 IST`: fix(validation): sanitize user symptom search query inputs
