@@ -68,3 +68,4 @@
 - `2026-06-28 20:03:17 IST`: docs(triage): document wound dressing and hemorrhage control steps
 - `2026-06-29 10:20:13 IST`: refactor(state): modularize symptom navigation state machine
 - `2026-06-29 12:26:05 IST`: feat(fractures): add splinting and immobilization guidance
+- `2026-06-29 15:14:44 IST`: refactor(state): modularize symptom navigation state machine
