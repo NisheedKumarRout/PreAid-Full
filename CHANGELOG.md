@@ -67,3 +67,4 @@
 - `2026-06-28 18:34:44 IST`: docs(deployment): update deployment security checklist and headers
 - `2026-06-28 20:03:17 IST`: docs(triage): document wound dressing and hemorrhage control steps
 - `2026-06-29 10:20:13 IST`: refactor(state): modularize symptom navigation state machine
+- `2026-06-29 12:26:05 IST`: feat(fractures): add splinting and immobilization guidance
