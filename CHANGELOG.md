@@ -70,3 +70,4 @@
 - `2026-06-29 12:26:05 IST`: feat(fractures): add splinting and immobilization guidance
 - `2026-06-29 15:14:44 IST`: refactor(state): modularize symptom navigation state machine
 - `2026-06-30 10:59:20 IST`: feat(heatstroke): add dehydration and heat exhaustion mitigation steps
+- `2026-06-30 17:17:46 IST`: feat(burns): implement minor vs severe burn classification steps
