@@ -73,3 +73,4 @@
 - `2026-06-30 17:17:46 IST`: feat(burns): implement minor vs severe burn classification steps
 - `2026-06-30 21:37:15 IST`: feat(choking): add Heimlich maneuver step-by-step visual prompts
 - `2026-07-01 12:41:47 IST`: feat(fractures): add splinting and immobilization guidance
+- `2026-07-01 13:56:05 IST`: docs(firstaid): add CPR chest compression depth and rate guidance
