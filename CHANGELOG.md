@@ -76,3 +76,4 @@
 - `2026-07-01 13:56:05 IST`: docs(firstaid): add CPR chest compression depth and rate guidance
 - `2026-07-02 12:12:37 IST`: refactor(state): modularize symptom navigation state machine
 - `2026-07-02 16:14:05 IST`: feat(triage): add initial symptom questionnaire flow for emergency assessment
+- `2026-07-03 13:41:04 IST`: feat(fractures): add splinting and immobilization guidance
