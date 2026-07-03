@@ -78,3 +78,4 @@
 - `2026-07-02 16:14:05 IST`: feat(triage): add initial symptom questionnaire flow for emergency assessment
 - `2026-07-03 13:41:04 IST`: feat(fractures): add splinting and immobilization guidance
 - `2026-07-03 16:37:58 IST`: test(triage): add unit checks for triage risk categorization
+- `2026-07-03 19:20:30 IST`: docs(deployment): update deployment security checklist and headers
