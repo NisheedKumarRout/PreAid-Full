@@ -88,3 +88,4 @@
 - `2026-07-06 18:16:52 IST`: fix(ui): improve responsive spacing on emergency call action buttons
 - `2026-07-07 10:54:11 IST`: docs(triage): document wound dressing and hemorrhage control steps
 - `2026-07-07 20:31:30 IST`: feat(heatstroke): add dehydration and heat exhaustion mitigation steps
+- `2026-07-08 10:56:23 IST`: docs(deployment): update deployment security checklist and headers
