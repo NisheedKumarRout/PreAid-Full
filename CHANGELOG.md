@@ -90,3 +90,4 @@
 - `2026-07-07 20:31:30 IST`: feat(heatstroke): add dehydration and heat exhaustion mitigation steps
 - `2026-07-08 10:56:23 IST`: docs(deployment): update deployment security checklist and headers
 - `2026-07-08 14:53:48 IST`: perf(scripts): defer non-critical analytics and preload triage modules
+- `2026-07-08 17:58:58 IST`: perf(assets): optimize first-aid illustration loading and SVG icons
