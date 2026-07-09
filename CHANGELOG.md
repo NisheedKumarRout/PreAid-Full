@@ -92,3 +92,4 @@
 - `2026-07-08 14:53:48 IST`: perf(scripts): defer non-critical analytics and preload triage modules
 - `2026-07-08 17:58:58 IST`: perf(assets): optimize first-aid illustration loading and SVG icons
 - `2026-07-09 18:28:04 IST`: feat(hypothermia): add cold exposure and frostbite first aid protocols
+- `2026-07-09 21:15:31 IST`: feat(bites): add snakebite and insect sting emergency instructions
