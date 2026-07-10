@@ -93,3 +93,4 @@
 - `2026-07-08 17:58:58 IST`: perf(assets): optimize first-aid illustration loading and SVG icons
 - `2026-07-09 18:28:04 IST`: feat(hypothermia): add cold exposure and frostbite first aid protocols
 - `2026-07-09 21:15:31 IST`: feat(bites): add snakebite and insect sting emergency instructions
+- `2026-07-10 10:14:27 IST`: feat(hypothermia): add cold exposure and frostbite first aid protocols
