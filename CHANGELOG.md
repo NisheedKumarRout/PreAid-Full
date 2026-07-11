@@ -95,3 +95,4 @@
 - `2026-07-09 21:15:31 IST`: feat(bites): add snakebite and insect sting emergency instructions
 - `2026-07-10 10:14:27 IST`: feat(hypothermia): add cold exposure and frostbite first aid protocols
 - `2026-07-10 17:29:48 IST`: feat(allergies): add anaphylaxis warning indicators and Epipen guide
+- `2026-07-11 12:36:41 IST`: feat(heatstroke): add dehydration and heat exhaustion mitigation steps
