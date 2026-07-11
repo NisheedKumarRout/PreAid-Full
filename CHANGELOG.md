@@ -97,3 +97,4 @@
 - `2026-07-10 17:29:48 IST`: feat(allergies): add anaphylaxis warning indicators and Epipen guide
 - `2026-07-11 12:36:41 IST`: feat(heatstroke): add dehydration and heat exhaustion mitigation steps
 - `2026-07-11 18:52:21 IST`: fix(storage): ensure user emergency profile persists in IndexedDB
+- `2026-07-11 21:13:19 IST`: style(cards): refine emergency card border radius and elevation shadows
