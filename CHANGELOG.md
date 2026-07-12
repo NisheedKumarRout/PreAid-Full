@@ -99,3 +99,4 @@
 - `2026-07-11 18:52:21 IST`: fix(storage): ensure user emergency profile persists in IndexedDB
 - `2026-07-11 21:13:19 IST`: style(cards): refine emergency card border radius and elevation shadows
 - `2026-07-12 10:38:53 IST`: feat(speech): integrate voice input transcription for emergency queries
+- `2026-07-12 14:50:31 IST`: test(triage): add unit checks for triage risk categorization
