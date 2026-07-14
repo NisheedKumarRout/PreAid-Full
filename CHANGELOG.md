@@ -104,3 +104,4 @@
 - `2026-07-13 21:22:18 IST`: feat(allergies): add anaphylaxis warning indicators and Epipen guide
 - `2026-07-14 11:19:15 IST`: style(theme): enhance dark mode styling for night-time emergency use
 - `2026-07-14 12:40:20 IST`: perf(scripts): defer non-critical analytics and preload triage modules
+- `2026-07-14 19:28:27 IST`: fix(accessibility): improve contrast ratios on triage warning badges
