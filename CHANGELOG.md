@@ -102,3 +102,4 @@
 - `2026-07-12 14:50:31 IST`: test(triage): add unit checks for triage risk categorization
 - `2026-07-13 11:34:03 IST`: fix(storage): ensure user emergency profile persists in IndexedDB
 - `2026-07-13 21:22:18 IST`: feat(allergies): add anaphylaxis warning indicators and Epipen guide
+- `2026-07-14 11:19:15 IST`: style(theme): enhance dark mode styling for night-time emergency use
