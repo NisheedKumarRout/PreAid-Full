@@ -105,3 +105,4 @@
 - `2026-07-14 11:19:15 IST`: style(theme): enhance dark mode styling for night-time emergency use
 - `2026-07-14 12:40:20 IST`: perf(scripts): defer non-critical analytics and preload triage modules
 - `2026-07-14 19:28:27 IST`: fix(accessibility): improve contrast ratios on triage warning badges
+- `2026-07-15 10:06:59 IST`: feat(burns): implement minor vs severe burn classification steps
