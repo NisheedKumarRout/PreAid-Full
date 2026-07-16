@@ -107,3 +107,4 @@
 - `2026-07-14 19:28:27 IST`: fix(accessibility): improve contrast ratios on triage warning badges
 - `2026-07-15 10:06:59 IST`: feat(burns): implement minor vs severe burn classification steps
 - `2026-07-15 14:49:38 IST`: refactor(state): modularize symptom navigation state machine
+- `2026-07-16 19:40:42 IST`: docs(firstaid): add CPR chest compression depth and rate guidance
