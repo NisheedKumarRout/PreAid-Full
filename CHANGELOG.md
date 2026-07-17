@@ -109,3 +109,4 @@
 - `2026-07-15 14:49:38 IST`: refactor(state): modularize symptom navigation state machine
 - `2026-07-16 19:40:42 IST`: docs(firstaid): add CPR chest compression depth and rate guidance
 - `2026-07-16 21:43:41 IST`: feat(burns): implement minor vs severe burn classification steps
+- `2026-07-17 12:52:38 IST`: feat(contacts): add local emergency and ambulance quick-dial shortcuts
