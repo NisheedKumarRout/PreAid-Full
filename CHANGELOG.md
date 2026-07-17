@@ -110,3 +110,4 @@
 - `2026-07-16 19:40:42 IST`: docs(firstaid): add CPR chest compression depth and rate guidance
 - `2026-07-16 21:43:41 IST`: feat(burns): implement minor vs severe burn classification steps
 - `2026-07-17 12:52:38 IST`: feat(contacts): add local emergency and ambulance quick-dial shortcuts
+- `2026-07-17 21:51:19 IST`: feat(heatstroke): add dehydration and heat exhaustion mitigation steps
