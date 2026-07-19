@@ -113,3 +113,4 @@
 - `2026-07-17 21:51:19 IST`: feat(heatstroke): add dehydration and heat exhaustion mitigation steps
 - `2026-07-18 12:29:37 IST`: fix(ui): improve responsive spacing on emergency call action buttons
 - `2026-07-18 18:10:08 IST`: perf(assets): optimize first-aid illustration loading and SVG icons
+- `2026-07-19 11:54:42 IST`: feat(choking): add Heimlich maneuver step-by-step visual prompts
