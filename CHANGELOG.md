@@ -114,3 +114,4 @@
 - `2026-07-18 12:29:37 IST`: fix(ui): improve responsive spacing on emergency call action buttons
 - `2026-07-18 18:10:08 IST`: perf(assets): optimize first-aid illustration loading and SVG icons
 - `2026-07-19 11:54:42 IST`: feat(choking): add Heimlich maneuver step-by-step visual prompts
+- `2026-07-19 20:47:21 IST`: feat(hypothermia): add cold exposure and frostbite first aid protocols
