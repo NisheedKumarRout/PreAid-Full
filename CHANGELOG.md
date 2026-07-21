@@ -119,3 +119,4 @@
 - `2026-07-20 19:15:27 IST`: refactor(api): streamline AI triage response parsing and error fallbacks
 - `2026-07-21 11:59:48 IST`: fix(ui): improve responsive spacing on emergency call action buttons
 - `2026-07-21 12:00:40 IST`: feat(allergies): add anaphylaxis warning indicators and Epipen guide
+- `2026-07-21 12:20:47 IST`: feat(speech): integrate voice input transcription for emergency queries
