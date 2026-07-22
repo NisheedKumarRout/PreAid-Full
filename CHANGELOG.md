@@ -121,3 +121,4 @@
 - `2026-07-21 12:00:40 IST`: feat(allergies): add anaphylaxis warning indicators and Epipen guide
 - `2026-07-21 12:20:47 IST`: feat(speech): integrate voice input transcription for emergency queries
 - `2026-07-22 15:00:46 IST`: refactor(models): improve Cohere and Gemini model fallback resolution
+- `2026-07-22 17:20:05 IST`: refactor(api): streamline AI triage response parsing and error fallbacks
