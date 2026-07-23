@@ -123,3 +123,4 @@
 - `2026-07-22 15:00:46 IST`: refactor(models): improve Cohere and Gemini model fallback resolution
 - `2026-07-22 17:20:05 IST`: refactor(api): streamline AI triage response parsing and error fallbacks
 - `2026-07-23 12:07:10 IST`: feat(fractures): add splinting and immobilization guidance
+- `2026-07-23 15:14:49 IST`: feat(choking): add Heimlich maneuver step-by-step visual prompts
