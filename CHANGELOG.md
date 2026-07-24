@@ -125,3 +125,4 @@
 - `2026-07-23 12:07:10 IST`: feat(fractures): add splinting and immobilization guidance
 - `2026-07-23 15:14:49 IST`: feat(choking): add Heimlich maneuver step-by-step visual prompts
 - `2026-07-24 11:45:10 IST`: feat(medication): add basic dosage timer reminder logic
+- `2026-07-24 15:24:39 IST`: feat(burns): implement minor vs severe burn classification steps
