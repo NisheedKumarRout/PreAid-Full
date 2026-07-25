@@ -127,3 +127,4 @@
 - `2026-07-24 11:45:10 IST`: feat(medication): add basic dosage timer reminder logic
 - `2026-07-24 15:24:39 IST`: feat(burns): implement minor vs severe burn classification steps
 - `2026-07-25 17:04:15 IST`: docs(deployment): update deployment security checklist and headers
+- `2026-07-25 21:56:17 IST`: feat(poison): add poison control center guidance and hotline directory
