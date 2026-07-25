@@ -126,3 +126,4 @@
 - `2026-07-23 15:14:49 IST`: feat(choking): add Heimlich maneuver step-by-step visual prompts
 - `2026-07-24 11:45:10 IST`: feat(medication): add basic dosage timer reminder logic
 - `2026-07-24 15:24:39 IST`: feat(burns): implement minor vs severe burn classification steps
+- `2026-07-25 17:04:15 IST`: docs(deployment): update deployment security checklist and headers
