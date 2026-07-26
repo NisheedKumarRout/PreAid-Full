@@ -128,3 +128,4 @@
 - `2026-07-24 15:24:39 IST`: feat(burns): implement minor vs severe burn classification steps
 - `2026-07-25 17:04:15 IST`: docs(deployment): update deployment security checklist and headers
 - `2026-07-25 21:56:17 IST`: feat(poison): add poison control center guidance and hotline directory
+- `2026-07-26 16:03:13 IST`: perf(scripts): defer non-critical analytics and preload triage modules
