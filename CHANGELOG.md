@@ -130,3 +130,4 @@
 - `2026-07-25 21:56:17 IST`: feat(poison): add poison control center guidance and hotline directory
 - `2026-07-26 16:03:13 IST`: perf(scripts): defer non-critical analytics and preload triage modules
 - `2026-07-26 21:32:03 IST`: fix(ui): improve responsive spacing on emergency call action buttons
+- `2026-07-27 15:33:02 IST`: docs(api): update API integration guide with rate limit recommendations
