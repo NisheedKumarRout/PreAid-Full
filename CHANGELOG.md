@@ -133,3 +133,4 @@
 - `2026-07-27 15:33:02 IST`: docs(api): update API integration guide with rate limit recommendations
 - `2026-07-27 17:05:12 IST`: feat(burns): implement minor vs severe burn classification steps
 - `2026-07-28 13:38:52 IST`: refactor(api): streamline AI triage response parsing and error fallbacks
+- `2026-07-28 14:25:38 IST`: feat(speech): integrate voice input transcription for emergency queries
