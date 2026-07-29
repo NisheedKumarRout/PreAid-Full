@@ -135,3 +135,4 @@
 - `2026-07-28 13:38:52 IST`: refactor(api): streamline AI triage response parsing and error fallbacks
 - `2026-07-28 14:25:38 IST`: feat(speech): integrate voice input transcription for emergency queries
 - `2026-07-28 17:25:37 IST`: feat(contacts): add local emergency and ambulance quick-dial shortcuts
+- `2026-07-29 13:31:35 IST`: docs(api): update API integration guide with rate limit recommendations
