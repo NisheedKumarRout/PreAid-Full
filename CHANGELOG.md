@@ -140,3 +140,4 @@
 - `2026-07-29 18:51:50 IST`: refactor(models): improve Cohere and Gemini model fallback resolution
 - `2026-07-30 13:28:28 IST`: refactor(models): improve Cohere and Gemini model fallback resolution
 - `2026-07-30 15:59:35 IST`: fix(ui): improve responsive spacing on emergency call action buttons
+- `2026-07-31 15:40:28 IST`: fix(chat): handle network timeout with automatic fallback to offline rules
