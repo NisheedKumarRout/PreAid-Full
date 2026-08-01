@@ -144,3 +144,4 @@
 - `2026-07-31 19:34:11 IST`: fix(ui): improve responsive spacing on emergency call action buttons
 - `2026-08-01 12:20:19 IST`: feat(bites): add snakebite and insect sting emergency instructions
 - `2026-08-01 14:37:55 IST`: feat(fractures): add splinting and immobilization guidance
+- `2026-08-01 20:47:20 IST`: feat(heatstroke): add dehydration and heat exhaustion mitigation steps
