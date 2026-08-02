@@ -147,3 +147,4 @@
 - `2026-08-01 20:47:20 IST`: feat(heatstroke): add dehydration and heat exhaustion mitigation steps
 - `2026-08-02 14:48:09 IST`: style(cards): refine emergency card border radius and elevation shadows
 - `2026-08-02 18:20:22 IST`: fix(ui): improve responsive spacing on emergency call action buttons
+- `2026-08-02 21:14:01 IST`: feat(allergies): add anaphylaxis warning indicators and Epipen guide
